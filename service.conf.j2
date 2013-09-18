@@ -1,0 +1,26 @@
+description "{{ description }}"
+author "{{ author }}"
+
+#start on (local-filesystems and net-device-up IFACE=eth0)
+#stop on shutdown
+
+start on runlevel [2345]
+stop on runlevel [!2345]
+
+respawn
+respawn limit 5 60 #try 5 times within 60 seconds, or giveup
+
+script
+    echo $$ > /var/run/{{ service }}.pid
+    exec sudo -u nodejs NODE_ENV=production {{ node_path }} {{ script_path }} >> /var/log/nodejs/{{ service }}.log 2>&1
+end script
+
+pre-start script
+    mkdir -p /var/log/nodejs
+    echo "\n[`date -u +%Y-%m-%dT%T.%3NZ`] (sys) Starting" >> /var/log/nodejs/{{ service }}.log
+end script
+
+pre-stop script
+    rm /var/run/{{ service }}.pid
+    echo "[`date -u +%Y-%m-%dT%T.%3NZ`] (sys) Stopping\n" >> /var/log/nodejs/{{ service }}.log
+end script

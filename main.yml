@@ -1,0 +1,16 @@
+#VERSION:
+
+---
+- hosts: all
+  sudo: yes
+  vars_files:
+    - vars.yml
+  tasks:
+  - name: ensure nodejs group exists
+    group: name=nodejs state=present system=yes
+  - name: ensure nodejs user exists
+    user: name=nodejs group=nodejs createhome=no shell=/bin/false system=yes state=present
+  - name: copy template
+    template: src=service.conf.j2 dest=/etc/init/{{ service }}.conf backup=yes mode=0644
+  - name: start {{ service }}
+    service: name={{ service }} state=started

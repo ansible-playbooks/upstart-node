@@ -1,5 +1,5 @@
-Ansible / monit-web
-===================
+Ansible / upstart-node
+======================
 
 Ansible playbook to setup a Node.js Ubuntu service managed by Upstart.
 
